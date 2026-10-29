@@ -1,0 +1,44 @@
+body {
+  margin: 0;
+  background: #0b1f33;
+  color: #f3f7fa;
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  scroll-behavior: smooth;
+}
+
+
+main {
+  margin: 0 auto;
+}
+
+
+.display{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: right;
+  height: 20vh;
+  width: 100%;
+  font-size: 2rem;
+}
+
+.number{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+  width: 10vh;
+  font-size: 2rem;
+}
+
+.operator{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 10vh;
+  width: 10vh;
+  font-size: 2rem;
+}
