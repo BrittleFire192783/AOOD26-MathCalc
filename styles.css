@@ -12,33 +12,37 @@ main {
   margin: 0 auto;
 }
 
+#display,
+#number-rows {
+  width: min(90%, 680px);
+  margin: 20px auto;
+  border-spacing: 8px;
+}
 
-.display{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: right;
-  height: 20vh;
+#result {
+  box-sizing: border-box;
+  display: block;
   width: 100%;
-  font-size: 2rem;
+  height: 90px;
+  padding: 0 20px;
+  font-size: 2.5rem;
+  text-align: right;
 }
 
-.number{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  height: 10vh;
-  width: 10vh;
-  font-size: 2rem;
+#display td:last-child {
+  width: 90px;
 }
 
-.operator{
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.clear {
+  width: 100%;
+  height: 90px;
+  font-size: 2.5rem;
+}
+
+.number,
+.operator, .equals {
   justify-content: center;
-  height: 10vh;
-  width: 10vh;
-  font-size: 2rem;
+  width: 100%;
+  height: 110px;
+  font-size: 3rem;
 }
