@@ -1,6 +1,7 @@
 let result = document.getElementById('result');
 let numberButtons = document.querySelectorAll('.number');
 let operatorButtons = document.querySelectorAll('.operator');
+let mathButtons = document.querySelectorAll('.math');
 let clearButton = document.querySelector('.clear');
 
 // Show a number in the display when a number button is clicked.
@@ -17,24 +18,56 @@ for (let i = 0; i < operatorButtons.length; i++) {
   });
 }
 
+// Add a math symbol or function name to the display.
+for (let i = 0; i < mathButtons.length; i++) {
+  mathButtons[i].addEventListener('click', function () {
+    result.value = result.value + mathButtons[i].textContent;
+  });
+}
+
 // Empty the display when the clear button is clicked.
 clearButton.addEventListener('click', function () {
   result.value = '';
 });
 
-// Calculate the expression when the equals button is clicked.
-let equalsButton = document.querySelector('.equals');
-equalsButton.addEventListener('click', function () {
+function calculate() {
   let calculation = result.value;
 
-  // JavaScript uses *, /, and - instead of these calculator symbols.
+  // Convert calculator symbols and typed shortcuts into JavaScript math.
   calculation = calculation.replaceAll('×', '*');
   calculation = calculation.replaceAll('÷', '/');
   calculation = calculation.replaceAll('−', '-');
+  calculation = calculation.replace(/\bpi\b/gi, 'Math.PI');
+  calculation = calculation.replaceAll('π', 'Math.PI');
+  calculation = calculation.replace(/\bround\s*\(/gi, 'Math.round(');
+  calculation = calculation.replaceAll('^', '**');
+
+  // Allow only numbers, math operators, parentheses, commas, and these Math values.
+  let safeCalculation = calculation;
+  safeCalculation = safeCalculation.replaceAll('Math.PI', '');
+  safeCalculation = safeCalculation.replaceAll('Math.round', '');
+
+  if (calculation === '' || !/^[0-9+\-*/().,\s]*$/.test(safeCalculation)) {
+    result.value = 'Error';
+    return;
+  }
 
   try {
     result.value = eval(calculation);
   } catch (error) {
     result.value = 'Error';
+  }
+}
+
+// Calculate the expression when the equals button is clicked.
+let equalsButton = document.querySelector('.equals');
+equalsButton.addEventListener('click', function () {
+  calculate();
+});
+
+// Let someone calculate typed input by pressing Enter.
+result.addEventListener('keydown', function (event) {
+  if (event.key === 'Enter') {
+    calculate();
   }
 });
