@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="A website for a calculator.">
   <title>Calculator</title>
   <link rel="icon" type="image/x-icon" href="https://cdn.dribbble.com/userupload/21968548/file/original-50a8900b3222e7e50fde50a5d39356cc.png?resize=752x564&vertical=center">
@@ -57,4 +59,27 @@
     <td><button class="operator">+</button></td>
   </tr>
 </table>
+
+<section class="stats-panel" aria-label="Statistical calculations">
+  <p class="keypad-section-label">STAT</p>
+  <div class="stats-buttons">
+    <button type="button" class="stat" data-stat="mean">Mean</button>
+    <button type="button" class="stat" data-stat="median">Median</button>
+    <button type="button" class="stat" data-stat="mode">Mode</button>
+    <button type="button" class="stat" data-stat="min">Min</button>
+    <button type="button" class="stat" data-stat="max">Max</button>
+  </div>
+  <p id="statsOutput" aria-live="polite"></p>
+</section>
+
+<section id="file-calculator" aria-label="Stat data input">
+  <label for="fileToLoad">Choose a data file</label>
+  <input type="file" id="fileToLoad" accept=".txt,.csv">
+  <button type="button" class="file-button" id="loadFile">Load Selected</button>
+
+  <p id="Message" role="status"></p>
+
+  <label for="fileInput">File data</label>
+  <textarea class="textinput" id="fileInput" cols="40" rows="4" placeholder="Comma-separated values will appear here."></textarea>
+</section>
 </body>

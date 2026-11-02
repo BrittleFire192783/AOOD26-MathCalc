@@ -13,9 +13,15 @@ main {
 }
 
 #display,
-#number-rows {
+#number-rows,
+#file-calculator,
+.stats-panel {
   width: min(90%, 680px);
-  margin: 20px auto;
+  margin: 12px auto;
+}
+
+#display,
+#number-rows {
   border-spacing: 8px;
 }
 
@@ -41,7 +47,7 @@ main {
 
 .math {
   width: 100%;
-  height: 70px;
+  height: 55px;
   font-size: 1.5rem;
 }
 
@@ -49,6 +55,63 @@ main {
 .operator, .equals {
   justify-content: center;
   width: 100%;
-  height: 110px;
+  height: 80px;
   font-size: 3rem;
+}
+
+#file-calculator {
+  box-sizing: border-box;
+  margin-top: 0;
+  padding: 0 8px 8px;
+}
+
+.keypad-section-label {
+  margin: 0 0 8px;
+  color: #9fd3ff;
+  font-size: 0.9rem;
+  letter-spacing: 0.15em;
+  text-align: left;
+}
+
+#fileToLoad,
+#fileInput {
+  box-sizing: border-box;
+  width: 100%;
+  margin: 6px 0;
+  padding: 10px;
+  font: inherit;
+}
+
+.file-button,
+.stat {
+  width: 100%;
+  min-height: 55px;
+  padding: 8px 12px;
+  font-size: 1.1rem;
+}
+
+#statsOutput {
+  min-height: 1.6em;
+  margin: 8px 0 0;
+  text-align: right;
+}
+
+.stats-panel {
+  margin-bottom: 0;
+}
+
+.stats-buttons {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 8px;
+}
+
+.file-button {
+  margin: 6px 0;
+}
+
+@media (max-width: 520px) {
+  .stats-buttons {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }

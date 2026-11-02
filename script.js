@@ -42,6 +42,10 @@ function calculate() {
   calculation = calculation.replace(/\bround\s*\(/gi, 'Math.round(');
   calculation = calculation.replaceAll('^', '**');
 
+  // Support calculator-style implicit multiplication, such as 2π and 2(3 + 4).
+  calculation = calculation.replace(/(\d|\))(?=Math\.|\()/g, '$1*');
+  calculation = calculation.replace(/(Math\.PI|\))(?=\d)/g, '$1*');
+
   // Allow only numbers, math operators, parentheses, commas, and these Math values.
   let safeCalculation = calculation;
   safeCalculation = safeCalculation.replaceAll('Math.PI', '');
