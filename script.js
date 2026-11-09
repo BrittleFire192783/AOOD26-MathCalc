@@ -75,3 +75,127 @@ result.addEventListener('keydown', function (event) {
     calculate();
   }
 });
+
+// Load numerical data from a selected text or CSV file.
+let fileToLoad = document.getElementById('fileToLoad');
+let loadFileButton = document.getElementById('loadFile');
+let fileInput = document.getElementById('fileInput');
+let fileMessage = document.getElementById('Message');
+let statsOutput = document.getElementById('statsOutput');
+let statButtons = document.querySelectorAll('.stat');
+
+loadFileButton.addEventListener('click', function () {
+  let selectedFile = fileToLoad.files[0];
+
+  if (!selectedFile) {
+    fileMessage.textContent = 'Please choose a .txt or .csv file first.';
+    fileInput.value = '';
+    statsOutput.textContent = '';
+    return;
+  }
+
+  let reader = new FileReader();
+
+  reader.addEventListener('load', function () {
+    fileInput.value = reader.result;
+
+    let numbers = getFileNumbers();
+    if (numbers.length === 0) {
+      fileMessage.textContent = 'File loaded, but no numerical data was found.';
+      statsOutput.textContent = '';
+      return;
+    }
+
+    fileMessage.textContent = selectedFile.name + ' loaded (' + numbers.length + ' values).';
+    statsOutput.textContent = 'Choose a statistic above.';
+  });
+
+  reader.addEventListener('error', function () {
+    fileMessage.textContent = 'The selected file could not be read.';
+    fileInput.value = '';
+    statsOutput.textContent = '';
+  });
+
+  reader.readAsText(selectedFile);
+});
+
+// Turn comma-, space-, or line-separated file data into an array of numbers.
+function getFileNumbers() {
+  return fileInput.value
+    .split(/[\s,;]+/)
+    .filter(function (value) {
+      return value !== '' && Number.isFinite(Number(value));
+    })
+    .map(Number);
+}
+
+function findMode(numbers) {
+  let counts = {};
+  let highestCount = 0;
+
+  for (let i = 0; i < numbers.length; i++) {
+    let value = numbers[i];
+    counts[value] = (counts[value] || 0) + 1;
+    highestCount = Math.max(highestCount, counts[value]);
+  }
+
+  if (highestCount === 1) {
+    return 'No mode';
+  }
+
+  return Object.keys(counts)
+    .filter(function (value) {
+      return counts[value] === highestCount;
+    })
+    .map(Number)
+    .sort(function (a, b) {
+      return a - b;
+    })
+    .join(', ');
+}
+
+function calculateStatistic(statistic, numbers) {
+  let sortedNumbers = numbers.slice().sort(function (a, b) {
+    return a - b;
+  });
+
+  if (statistic === 'mean') {
+    let total = numbers.reduce(function (sum, value) {
+      return sum + value;
+    }, 0);
+    return total / numbers.length;
+  }
+
+  if (statistic === 'median') {
+    let middle = Math.floor(sortedNumbers.length / 2);
+    return sortedNumbers.length % 2 === 0
+      ? (sortedNumbers[middle - 1] + sortedNumbers[middle]) / 2
+      : sortedNumbers[middle];
+  }
+
+  if (statistic === 'mode') {
+    return findMode(numbers);
+  }
+
+  if (statistic === 'min') {
+    return sortedNumbers[0];
+  }
+
+  return sortedNumbers[sortedNumbers.length - 1];
+}
+
+for (let i = 0; i < statButtons.length; i++) {
+  statButtons[i].addEventListener('click', function () {
+    let numbers = getFileNumbers();
+
+    if (numbers.length === 0) {
+      statsOutput.textContent = 'Load a file containing numerical data first.';
+      return;
+    }
+
+    let statistic = statButtons[i].dataset.stat;
+    let answer = calculateStatistic(statistic, numbers);
+    let label = statistic.charAt(0).toUpperCase() + statistic.slice(1);
+    statsOutput.textContent = label + ': ' + answer;
+  });
+}
