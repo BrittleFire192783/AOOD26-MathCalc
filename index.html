@@ -3,83 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="A website for a calculator.">
-  <title>Calculator</title>
-  <link rel="icon" type="image/x-icon" href="https://cdn.dribbble.com/userupload/21968548/file/original-50a8900b3222e7e50fde50a5d39356cc.png?resize=752x564&vertical=center">
+  <meta name="description" content="A multi-function terminal calculator for expressions and file-based statistics.">
+  <title>MathCalc Terminal</title>
+  <link rel="icon" type="image/x-icon" href="https://cdn.dribbble.com/userupload/21968548/file/original-50a8900b3222e7e50fde50a5d39356cc.png?resize=752x564&amp;vertical=center">
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
 
-<body>
-    <main>
-        <h1>Calculator</h1>
-        <p>Welcome to the Calculator. It calculates stuff.</p>
-    </main>
+<body class="scanlines">
+  <main class="calculator-shell">
+    <header class="terminal-header">
+      <div>
+        <p class="status-label">System // Math Unit 01</p>
+        <h1 class="glitch-text" data-text="MATHCALC">MATHCALC</h1>
+        <p class="terminal-subtitle">Numeric processing &amp; statistical analysis console</p>
+      </div>
+      <p class="system-status"><span aria-hidden="true"></span>Online</p>
+    </header>
 
+    <section class="glitch-panel output-panel" aria-label="Calculator display">
+      <p class="status-label">Expression Input</p>
+      <table id="display">
+        <tr>
+          <td><input type="text" id="result" aria-label="Calculator expression" placeholder="0"></td>
+          <td><button type="button" class="clear terminal-button terminal-button--danger">C</button></td>
+        </tr>
+      </table>
+    </section>
 
+    <section class="glitch-panel keypad-panel" aria-label="Calculator keypad">
+      <p class="status-label">Manual Control</p>
+      <table id="number-rows">
+        <tr>
+          <td><button type="button" class="math terminal-button">π</button></td>
+          <td><button type="button" class="math terminal-button">^</button></td>
+          <td><button type="button" class="math terminal-button">(</button></td>
+          <td><button type="button" class="math terminal-button">)</button></td>
+        </tr>
+        <tr>
+          <td><button type="button" class="number terminal-button">7</button></td>
+          <td><button type="button" class="number terminal-button">8</button></td>
+          <td><button type="button" class="number terminal-button">9</button></td>
+          <td><button type="button" class="operator terminal-button terminal-button--accent">÷</button></td>
+        </tr>
+        <tr>
+          <td><button type="button" class="number terminal-button">4</button></td>
+          <td><button type="button" class="number terminal-button">5</button></td>
+          <td><button type="button" class="number terminal-button">6</button></td>
+          <td><button type="button" class="operator terminal-button terminal-button--accent">×</button></td>
+        </tr>
+        <tr>
+          <td><button type="button" class="number terminal-button">1</button></td>
+          <td><button type="button" class="number terminal-button">2</button></td>
+          <td><button type="button" class="number terminal-button">3</button></td>
+          <td><button type="button" class="operator terminal-button terminal-button--accent">−</button></td>
+        </tr>
+        <tr>
+          <td><button type="button" class="number terminal-button">0</button></td>
+          <td><button type="button" class="number terminal-button">.</button></td>
+          <td><button type="button" class="equals terminal-button terminal-button--primary">=</button></td>
+          <td><button type="button" class="operator terminal-button terminal-button--accent">+</button></td>
+        </tr>
+      </table>
+    </section>
 
+    <section class="stats-panel glitch-panel" aria-label="Statistical calculations">
+      <p class="status-label">Statistical Functions</p>
+      <div class="stats-buttons">
+        <button type="button" class="stat terminal-button" data-stat="mean">Mean</button>
+        <button type="button" class="stat terminal-button" data-stat="median">Median</button>
+        <button type="button" class="stat terminal-button" data-stat="mode">Mode</button>
+        <button type="button" class="stat terminal-button" data-stat="min">Min</button>
+        <button type="button" class="stat terminal-button" data-stat="max">Max</button>
+      </div>
+      <p id="statsOutput" class="terminal-readout" aria-live="polite">Awaiting data input...</p>
+    </section>
 
-<table id="display">
-  <tr>
-    <td><input type="text" id="result"></td>
-    <td><button class="clear">C</button></td>
-  </tr>
-</table>    
+    <section id="file-calculator" class="glitch-panel" aria-label="Stat data input">
+      <p class="status-label">Data Import // CSV or TXT</p>
+      <label for="fileToLoad" class="field-label">Source file</label>
+      <input type="file" id="fileToLoad" accept=".txt,.csv">
+      <button type="button" class="file-button terminal-button terminal-button--primary" id="loadFile">Load Selected</button>
 
+      <p id="Message" class="terminal-readout" role="status">No file loaded.</p>
 
-<table id="number-rows">
-  <tr>
-    <td><button class="math">π</button></td>
-    <td><button class="math">^</button></td>
-    <td><button class="math">(</button></td>
-    <td><button class="math">)</button></td>
-  </tr>
-<tr>
-    <td><button class="number">7</button></td>
-    <td><button class="number">8</button></td>
-    <td><button class="number">9</button></td>
-    <td><button class="operator">÷</button></td>
-  </tr>
-  <tr>
-    <td><button class="number">4</button></td>
-    <td><button class="number">5</button></td>
-    <td><button class="number">6</button></td>
-    <td><button class="operator">×</button></td>
-  </tr>
-  <tr>
-    <td><button class="number">1</button></td>
-    <td><button class="number">2</button></td>
-    <td><button class="number">3</button></td>
-    <td><button class="operator">−</button></td>
-  </tr>
-  <tr>
-    <td><button class="number">0</button></td>
-    <td><button class="number">.</button></td>
-    <td><button class="equals">=</button></td>
-    <td><button class="operator">+</button></td>
-  </tr>
-</table>
+      <label for="fileInput" class="field-label">Data buffer</label>
+      <textarea class="textinput terminal-input" id="fileInput" cols="40" rows="4" placeholder="Comma-separated values will appear here."></textarea>
+    </section>
 
-<section class="stats-panel" aria-label="Statistical calculations">
-  <p class="keypad-section-label">STAT</p>
-  <div class="stats-buttons">
-    <button type="button" class="stat" data-stat="mean">Mean</button>
-    <button type="button" class="stat" data-stat="median">Median</button>
-    <button type="button" class="stat" data-stat="mode">Mode</button>
-    <button type="button" class="stat" data-stat="min">Min</button>
-    <button type="button" class="stat" data-stat="max">Max</button>
-  </div>
-  <p id="statsOutput" aria-live="polite"></p>
-</section>
-
-<section id="file-calculator" aria-label="Stat data input">
-  <label for="fileToLoad">Choose a data file</label>
-  <input type="file" id="fileToLoad" accept=".txt,.csv">
-  <button type="button" class="file-button" id="loadFile">Load Selected</button>
-
-  <p id="Message" role="status"></p>
-
-  <label for="fileInput">File data</label>
-  <textarea class="textinput" id="fileInput" cols="40" rows="4" placeholder="Comma-separated values will appear here."></textarea>
-</section>
+    <footer class="terminal-footer">
+      <span>MC-01 // Local Processing</span>
+      <span>Vanilla JS Runtime</span>
+    </footer>
+  </main>
 </body>
+</html>

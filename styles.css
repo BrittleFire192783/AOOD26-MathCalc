@@ -1,117 +1,432 @@
+:root {
+  --bg-abyss: #02070d;
+  --bg-terminal: #06111b;
+  --bg-panel: #081722;
+  --bg-control: #0b1d29;
+  --cyan: #32e6e2;
+  --cyan-muted: #118b91;
+  --cyan-dark: #0b4d56;
+  --magenta: #ff3b9d;
+  --magenta-muted: #8c285f;
+  --text: #d5f6f3;
+  --text-muted: #72a9aa;
+  --line: #174b52;
+  --line-bright: #2a8990;
+  --panel-padding: clamp(14px, 3vw, 24px);
+  --font-terminal: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
+  min-height: 100vh;
   margin: 0;
-  background: #0b1f33;
-  color: #f3f7fa;
-  font-family: Arial, sans-serif;
-  line-height: 1.6;
+  padding: clamp(24px, 5vw, 64px) 16px;
+  overflow-x: hidden;
+  background:
+    linear-gradient(rgba(16, 91, 101, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(16, 91, 101, 0.05) 1px, transparent 1px),
+    radial-gradient(circle at 50% 0%, #092333 0%, var(--bg-abyss) 58%);
+  background-size: 32px 32px, 32px 32px, auto;
+  color: var(--text);
+  font-family: var(--font-terminal);
+  line-height: 1.5;
   scroll-behavior: smooth;
 }
 
+button,
+input,
+textarea {
+  font: inherit;
+}
 
-main {
+/* Reusable CRT overlay. It stays visual-only so controls remain easy to use. */
+.scanlines::after {
+  content: "";
+  position: fixed;
+  z-index: 100;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0,
+    transparent 3px,
+    rgba(7, 27, 36, 0.18) 4px
+  );
+  opacity: 0.42;
+}
+
+.calculator-shell {
+  width: min(100%, 720px);
   margin: 0 auto;
 }
 
-#display,
-#number-rows,
-#file-calculator,
-.stats-panel {
-  width: min(90%, 680px);
-  margin: 12px auto;
+.terminal-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 18px;
+  padding: 0 3px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.terminal-header h1 {
+  margin: 2px 0 0;
+  color: var(--text);
+  font-size: clamp(2rem, 8vw, 4rem);
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 0.95;
+}
+
+.terminal-subtitle {
+  margin: 12px 0 0;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+}
+
+.system-status {
+  flex: 0 0 auto;
+  margin: 0;
+  color: var(--cyan);
+  font-size: 0.68rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.system-status span {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  margin-right: 7px;
+  background: var(--cyan);
+  box-shadow: 0 0 6px rgba(50, 230, 226, 0.7);
+}
+
+/* Important display text gets a restrained, static RGB split. */
+.glitch-text {
+  position: relative;
+  text-shadow: 1px 0 var(--cyan), -1px 0 var(--magenta);
+}
+
+.glitch-text::before,
+.glitch-text::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.glitch-text:hover::before {
+  color: var(--cyan);
+  opacity: 0.32;
+  transform: translate(2px, -1px);
+  clip-path: inset(16% 0 61% 0);
+}
+
+.glitch-text:hover::after {
+  color: var(--magenta);
+  opacity: 0.3;
+  transform: translate(-2px, 1px);
+  clip-path: inset(64% 0 12% 0);
+}
+
+/* Shared technical panel with offset color detail and clipped corners. */
+.glitch-panel {
+  position: relative;
+  margin: 14px 0;
+  padding: var(--panel-padding);
+  border: 1px solid var(--line-bright);
+  background:
+    linear-gradient(135deg, rgba(50, 230, 226, 0.045), transparent 34%),
+    var(--bg-panel);
+  clip-path: polygon(0 10px, 10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%);
+  box-shadow: 3px 3px 0 -1px var(--magenta-muted), -3px -3px 0 -1px var(--cyan-dark);
+  filter: drop-shadow(2px 2px 0 var(--magenta-muted)) drop-shadow(-2px -2px 0 var(--cyan-dark));
+}
+
+.glitch-panel::before,
+.glitch-panel::after {
+  content: "";
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+}
+
+.glitch-panel::before {
+  top: 5px;
+  right: 5px;
+  border-top: 1px solid var(--cyan);
+  border-right: 1px solid var(--cyan);
+}
+
+.glitch-panel::after {
+  bottom: 5px;
+  left: 5px;
+  border-bottom: 1px solid var(--magenta);
+  border-left: 1px solid var(--magenta);
+}
+
+.status-label,
+.field-label {
+  display: block;
+  color: var(--cyan);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  line-height: 1.4;
+  text-transform: uppercase;
+}
+
+.status-label {
+  margin: 0 0 13px;
+}
+
+.field-label {
+  margin: 14px 0 5px;
+  color: var(--text-muted);
+}
+
+/* One control component covers calculator, statistic, and file buttons. */
+.terminal-button {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  min-height: 48px;
+  padding: 8px 12px;
+  border: 1px solid var(--line-bright);
+  border-radius: 0;
+  outline: 0;
+  background: var(--bg-control);
+  color: var(--text);
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  transition: border-color 100ms ease, color 100ms ease, background-color 100ms ease, transform 100ms ease;
+}
+
+.terminal-button::after {
+  content: "";
+  position: absolute;
+  right: 3px;
+  bottom: 3px;
+  width: 5px;
+  height: 5px;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  opacity: 0.7;
+}
+
+.terminal-button:hover {
+  border-color: var(--cyan);
+  background: #0d2733;
+  color: var(--cyan);
+  box-shadow: 2px 0 0 rgba(255, 59, 157, 0.55), -2px 0 0 rgba(50, 230, 226, 0.45);
+  transform: translateY(-1px);
+}
+
+.terminal-button:active {
+  transform: translate(1px, 1px);
+}
+
+.terminal-button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid var(--cyan);
+  outline-offset: 2px;
+}
+
+.terminal-button--accent {
+  border-color: var(--magenta-muted);
+  color: #ff9bca;
+}
+
+.terminal-button--primary {
+  border-color: var(--cyan);
+  background: #0a2a32;
+  color: var(--cyan);
+}
+
+.terminal-button--danger {
+  border-color: var(--magenta);
+  color: var(--magenta);
 }
 
 #display,
 #number-rows {
-  border-spacing: 8px;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 7px;
+  margin: -7px;
+}
+
+#display {
+  width: calc(100% + 14px);
+}
+
+#result,
+.terminal-input,
+#fileToLoad {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--bg-terminal);
+  color: var(--cyan);
 }
 
 #result {
-  box-sizing: border-box;
   display: block;
-  width: 100%;
-  height: 90px;
-  padding: 0 20px;
-  font-size: 2.5rem;
+  height: 84px;
+  padding: 0 18px;
+  font-size: clamp(1.75rem, 7vw, 2.7rem);
   text-align: right;
+  caret-color: var(--magenta);
+}
+
+#result::placeholder,
+.terminal-input::placeholder {
+  color: var(--cyan-dark);
+  opacity: 1;
 }
 
 #display td:last-child {
-  width: 90px;
+  width: 84px;
 }
 
 .clear {
   width: 100%;
-  height: 90px;
-  font-size: 2.5rem;
+  height: 84px;
+  font-size: 1.6rem;
 }
 
 .math {
   width: 100%;
-  height: 55px;
-  font-size: 1.5rem;
-}
-
-.number,
-.operator, .equals {
-  justify-content: center;
-  width: 100%;
-  height: 80px;
-  font-size: 3rem;
-}
-
-#file-calculator {
-  box-sizing: border-box;
-  margin-top: 0;
-  padding: 0 8px 8px;
-}
-
-.keypad-section-label {
-  margin: 0 0 8px;
-  color: #9fd3ff;
-  font-size: 0.9rem;
-  letter-spacing: 0.15em;
-  text-align: left;
-}
-
-#fileToLoad,
-#fileInput {
-  box-sizing: border-box;
-  width: 100%;
-  margin: 6px 0;
-  padding: 10px;
-  font: inherit;
-}
-
-.file-button,
-.stat {
-  width: 100%;
-  min-height: 55px;
-  padding: 8px 12px;
+  height: 50px;
+  color: var(--text-muted);
   font-size: 1.1rem;
 }
 
-#statsOutput {
-  min-height: 1.6em;
-  margin: 8px 0 0;
-  text-align: right;
-}
-
-.stats-panel {
-  margin-bottom: 0;
+.number,
+.operator,
+.equals {
+  width: 100%;
+  height: 66px;
+  font-size: 1.55rem;
 }
 
 .stats-buttons {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
-  gap: 8px;
+  gap: 7px;
+}
+
+.stat,
+.file-button {
+  width: 100%;
+}
+
+.stat {
+  font-size: 0.78rem;
+}
+
+.terminal-readout {
+  min-height: 1.6em;
+  margin: 14px 0 0;
+  padding: 8px 10px;
+  border-left: 2px solid var(--cyan-muted);
+  background: rgba(2, 10, 15, 0.55);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  letter-spacing: 0.03em;
+}
+
+#statsOutput {
+  color: var(--cyan);
+  text-align: right;
+}
+
+#fileToLoad {
+  padding: 8px;
+  font-size: 0.76rem;
+}
+
+#fileToLoad::file-selector-button {
+  margin-right: 12px;
+  padding: 8px 12px;
+  border: 1px solid var(--cyan-muted);
+  border-radius: 0;
+  background: var(--bg-control);
+  color: var(--cyan);
+  font: inherit;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
 }
 
 .file-button {
-  margin: 6px 0;
+  margin-top: 8px;
 }
 
-@media (max-width: 520px) {
+.terminal-input {
+  display: block;
+  min-height: 104px;
+  padding: 12px;
+  resize: vertical;
+  caret-color: var(--magenta);
+  line-height: 1.5;
+}
+
+.terminal-footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 3px 0;
+  color: var(--text-muted);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 560px) {
+  body {
+    padding: 24px 10px 36px;
+  }
+
+  .terminal-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 12px;
+  }
+
   .stats-buttons {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .number,
+  .operator,
+  .equals {
+    height: 58px;
+  }
+
+  .terminal-footer {
+    flex-direction: column;
+    gap: 3px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition: none !important;
   }
 }
